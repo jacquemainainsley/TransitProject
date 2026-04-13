@@ -17,7 +17,7 @@
 let data = [];
 
 // Load CSV
-fetch('data.csv')
+fetch('photoncountdata.csv')
 .then(response => response.text())
 .then(text => {
 let rows = text.split('\n').slice(1);
