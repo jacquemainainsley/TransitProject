@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Method Comparison (Parity Plot)</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        canvas {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Photon Count Method Comparison</h1>
+
+    <p>
+        Each point represents a photon count computed using two independent methods
+        across different exoplanets and atmospheric gases.
+        Agreement along the diagonal (y = x) indicates consistency between methods.
+    </p>
+
+    <canvas id="parityChart"></canvas>
+
+</div>
+
+<script>
+async function loadData() {
+
+    const response = await fetch("photoncountdata.csv");
+    const text = await response.text();
+
+    const rows = text.trim().split("\n").slice(1); // skip header
+
+    const data = [];
+
+    rows.forEach(row => {
+        const cols = row.split(",");
+
+        const planet = cols[0];
+        const gas = cols[1];
+
+        const method1 = parseFloat(cols[2]);
+        const method2 = parseFloat(cols[3]);
+
+        if (!isNaN(method1) && !isNaN(method2)) {
+            data.push({
+                x: method1,
+                y: method2,
+                planet: planet,
+                gas: gas
+            });
+        }
+    });
+
+    return data;
+}
+
+async function makePlot() {
+
+    const data = await loadData();
+
+    const minVal = Math.min(...data.map(d => Math.min(d.x, d.y)));
+    const maxVal = Math.max(...data.map(d => Math.max(d.x, d.y)));
+
+    const ctx = document.getElementById("parityChart").getContext("2d");
+
+    new Chart(ctx, {
+        type: "scatter",
+        data: {
+            datasets: [
+                {
+                    label: "Photon Counts (Method 1 vs Method 2)",
+                    data: data,
+                    pointRadius: 5
+                },
+                {
+                    label: "Ideal Agreement (y = x)",
+                    type: "line",
+                    data: [
+                        { x: minVal, y: minVal },
+                        { x: maxVal, y: maxVal }
+                    ],
+                    borderColor: "black",
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: "Method 1 Photon Counts"
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: "Method 2 Photon Counts"
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const point = context.raw;
+                            return `${point.planet} | ${point.gas}: (${point.x}, ${point.y})`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+makePlot();
+</script>
+
+</body>
+</html>
