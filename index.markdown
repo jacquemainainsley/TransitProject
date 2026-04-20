@@ -1,6 +1,5 @@
 
 
->>>>>>> 27ff3d3 (Add comparison page)
 layout: home
 title: Home
 
@@ -10,5 +9,4 @@ title: Home
 
 ## Try the explorer: [Launch Photon Explorer](/TransitProject/explorer.html)
 
-[Launch Photon Explorer](/TransitProject/explorer.html)
-27ff3d3 (Add comparison page)
+## Check out the data comparison: [Method Comparison](/TransitProject/comparison.html)
