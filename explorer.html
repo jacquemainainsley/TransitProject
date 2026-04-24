@@ -141,20 +141,7 @@ backgroundColor:"rgba(150,150,150,0.3)"
 label: "Selected Planet",
 data: [],
 pointRadius:8,
-backgroundColor: function(context){
-
-let point=
-context.dataset.data[context.dataIndex];
-
-if(!point.gas) return "black";
-
-if(point.gas==="H2O") return "blue";
-if(point.gas==="CO2") return "red";
-if(point.gas==="CH4") return "green";
-if(point.gas==="O2") return "purple";
-
-return "orange";
-}
+backgroundColor:"orange"
 },
 
 {
