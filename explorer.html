@@ -3,27 +3,10 @@
 <head>
 <title>Exoplanet Photon Explorer</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-</head>
-<body>
-
-<h1> Exoplanet Photon Explorer</h1>
-
-<label for="planet">Choose a planet:</label>
-<select id="planet"></select>
-
-<h2>Results:</h2>
-<div id="results"></div>
-
-<h2>Method Comparison</h2>
-<canvas id="comparisonChart"></canvas>
-
 <script>
 let data = [];
-let chart;
+let chart = null;
 
-// Load CSV
 fetch('photoncountdata.csv')
 .then(response => response.text())
 .then(text => {
@@ -35,8 +18,8 @@ rows.forEach(row => {
 let [planet, gas, m1, m2] = row.split(',');
 
 data.push({
-planet: planet,
-gas: gas,
+planet: planet.trim(),
+gas: gas.trim(),
 m1: parseFloat(m1),
 m2: parseFloat(m2)
 });
@@ -44,116 +27,123 @@ m2: parseFloat(m2)
 });
 
 populateDropdown();
-createChart();
 
 });
 
-function populateDropdown() {
 
-let planets = [...new Set(data.map(d => d.planet))];
-let dropdown = document.getElementById("planet");
+function populateDropdown(){
 
-planets.forEach(p => {
-let option = document.createElement("option");
-option.value = p;
-option.text = p;
+let planets =
+[...new Set(data.map(d=>d.planet))];
+
+let dropdown =
+document.getElementById("planet");
+
+planets.forEach(p=>{
+let option=document.createElement("option");
+option.value=p;
+option.text=p;
 dropdown.add(option);
 });
 
-dropdown.addEventListener("change", updateResults);
+dropdown.addEventListener(
+"change",
+updateResults
+);
 
-// initialize with first planet
-dropdown.selectedIndex = 0;
+dropdown.selectedIndex=0;
+
 updateResults();
 
 }
 
 
-function updateResults() {
 
-let selected = document.getElementById("planet").value;
+function updateResults(){
 
-let filtered = data.filter(
-d => d.planet === selected
+let selected=
+document.getElementById("planet").value;
+
+let filtered=
+data.filter(
+d=>d.planet===selected
 );
 
-let html =
+
+// update table
+
+let html=
 "<table border='1'><tr><th>Gas</th><th>Method 1</th><th>Method 2</th></tr>";
 
-filtered.forEach(d => {
-
+filtered.forEach(d=>{
 html +=
 `<tr>
 <td>${d.gas}</td>
 <td>${d.m1}</td>
 <td>${d.m2}</td>
 </tr>`;
-
 });
 
-html += "</table>";
+html+="</table>";
 
-document.getElementById("results").innerHTML = html;
+document.getElementById("results").innerHTML=html;
 
-highlightPlanet(selected);
+
+// redraw plot
+drawChart(selected);
 
 }
 
 
 
-function createChart() {
+function drawChart(selectedPlanet){
 
-let allPoints = data;
+if(chart){
+chart.destroy();
+}
 
-let minVal = Math.min(
-...allPoints.map(d=>Math.min(d.m1,d.m2))
-);
-
-let maxVal = Math.max(
-...allPoints.map(d=>Math.max(d.m1,d.m2))
-);
-
-const ctx =
-document.getElementById("comparisonChart")
-.getContext("2d");
-
-
-chart = new Chart(ctx, {
-
-type: "scatter",
-
-data: {
-
-datasets: [
-
-{
-label: "All Planets",
-data: allPoints.map(d => ({
+let backgroundPoints=
+data.map(d=>({
 x:d.m1,
 y:d.m2
-})),
-pointRadius:4,
-backgroundColor:"rgba(150,150,150,0.3)"
+}));
+
+let selectedPoints=
+data
+.filter(d=>d.planet===selectedPlanet)
+.map(d=>({
+x:d.m1,
+y:d.m2
+}));
+
+let minVal=Math.min(
+...data.map(d=>Math.min(d.m1,d.m2))
+);
+
+let maxVal=Math.max(
+...data.map(d=>Math.max(d.m1,d.m2))
+);
+
+chart = new Chart(
+document.getElementById("comparisonChart"),
+{
+type:"scatter",
+
+data:{
+datasets:[
+
+{
+label:"All Planets",
+data:backgroundPoints,
+backgroundColor:"rgba(150,150,150,.3)",
+pointRadius:4
 },
 
 {
-label: "Selected Planet",
-data: [],
-pointRadius:8,
-backgroundColor: function(context){
-
-let point=
-context.dataset.data[context.dataIndex];
-
-if(!point.gas) return "black";
-
-if(point.gas==="H2O") return "blue";
-if(point.gas==="CO2") return "red";
-if(point.gas==="CH4") return "green";
-if(point.gas==="O2") return "purple";
-
-return "orange";
-}
+label:selectedPlanet,
+data:selectedPoints,
+backgroundColor:"orange",
+pointRadius:8
 },
 
 {
@@ -164,16 +154,13 @@ data:[
 {x:maxVal,y:maxVal}
 ],
 borderColor:"black",
-pointRadius:0,
-fill:false
+pointRadius:0
 }
 
 ]
-
 },
 
 options:{
-
 scales:{
 x:{
 type:"logarithmic",
@@ -189,49 +176,10 @@ display:true,
 text:"Method 2"
 }
 }
-},
-
-plugins:{
-tooltip:{
-callbacks:{
-label:function(context){
-
-let p=context.raw;
-
-if(p.gas){
-return `${p.planet} | ${p.gas}`;
 }
-
-return "";
-
-}
-}
-}
-}
-
 }
 
 });
-
-}
-
-
-
-function highlightPlanet(selectedPlanet){
-
-let highlighted=
-data
-.filter(d=>d.planet===selectedPlanet)
-.map(d=>({
-x:d.m1,
-y:d.m2,
-planet:d.planet,
-gas:d.gas
-}));
-
-chart.data.datasets[1].data=highlighted;
-
-chart.update();
 
 }
 </script>
