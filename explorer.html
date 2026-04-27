@@ -92,6 +92,10 @@ html += "</table>";
 
 document.getElementById("results").innerHTML=html;
 
+if (comparisonChart){
+highlightSelectedPlanet();
+}
+
 }
 </script>
 
@@ -115,34 +119,46 @@ Choose a planet:
 <canvas id="comparisonChart"></canvas>
 
 <script>
+
+let comparisonChart;
+let allPlotData=[];
+
 fetch('photoncountdata.csv')
 .then(response => response.text())
 .then(text => {
 
-let rows =
+let rows=
 text.trim().split('\n').slice(1);
-
-let points=[];
 
 rows.forEach(row=>{
 
 let cols=row.split(',');
 
-points.push({
-x:parseFloat(cols[2]),
-y:parseFloat(cols[3])
+allPlotData.push({
+planet: cols[0],
+gas: cols[1],
+x: parseFloat(cols[2]),
+y: parseFloat(cols[3])
 });
 
 });
+
+makePlot();
+
+});
+
+
+function makePlot(){
 
 let minVal=Math.min(
-...points.map(p=>Math.min(p.x,p.y))
+...allPlotData.map(p=>Math.min(p.x,p.y))
 );
 
 let maxVal=Math.max(
-...points.map(p=>Math.max(p.x,p.y))
+...allPlotData.map(p=>Math.max(p.x,p.y))
 );
 
+comparisonChart=
 new Chart(
 document.getElementById("comparisonChart").getContext("2d"),
 {
@@ -153,8 +169,16 @@ datasets:[
 
 {
 label:"All Planets",
-data:points,
-pointRadius:5
+data:allPlotData,
+backgroundColor:"rgba(150,150,150,.3)",
+pointRadius:4
+},
+
+{
+label:"Selected Planet",
+data:[],
+backgroundColor:"orange",
+pointRadius:8
 },
 
 {
@@ -174,24 +198,41 @@ pointRadius:0
 options:{
 scales:{
 x:{
-type:"logarithmic",
-title:{
-display:true,
-text:"Method 1"
-}
+type:"logarithmic"
 },
 y:{
-type:"logarithmic",
-title:{
-display:true,
-text:"Method 2"
-}
+type:"logarithmic"
 }
 }
 }
 
 });
-});
+
+highlightSelectedPlanet();
+
+}
+
+
+
+function highlightSelectedPlanet(){
+
+let selected=
+document.getElementById("planet").value;
+
+if(!selected) return;
+
+let highlighted=
+allPlotData.filter(
+d=>d.planet===selected
+);
+
+comparisonChart.data.datasets[1].data=
+highlighted;
+
+comparisonChart.update();
+
+}
+
 </script>
 
 </body>
