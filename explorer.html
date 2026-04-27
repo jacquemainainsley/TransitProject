@@ -114,5 +114,85 @@ Choose a planet:
 <h2>Method Comparison (coming soon!)</h2>
 <canvas id="comparisonChart"></canvas>
 
+<script>
+fetch('photoncountdata.csv')
+.then(response => response.text())
+.then(text => {
+
+let rows =
+text.trim().split('\n').slice(1);
+
+let points=[];
+
+rows.forEach(row=>{
+
+let cols=row.split(',');
+
+points.push({
+x:parseFloat(cols[2]),
+y:parseFloat(cols[3])
+});
+
+});
+
+let minVal=Math.min(
+...points.map(p=>Math.min(p.x,p.y))
+);
+
+let maxVal=Math.max(
+...points.map(p=>Math.max(p.x,p.y))
+);
+
+new Chart(
+document.getElementById("comparisonChart").getContext("2d"),
+{
+type:"scatter",
+
+data:{
+datasets:[
+
+{
+label:"All Planets",
+data:points,
+pointRadius:5
+},
+
+{
+label:"y=x",
+type:"line",
+data:[
+{x:minVal,y:minVal},
+{x:maxVal,y:maxVal}
+],
+borderColor:"black",
+pointRadius:0
+}
+
+]
+},
+
+options:{
+scales:{
+x:{
+type:"logarithmic",
+title:{
+display:true,
+text:"Method 1"
+}
+},
+y:{
+type:"logarithmic",
+title:{
+display:true,
+text:"Method 2"
+}
+}
+}
+}
+
+});
+});
+</script>
+
 </body>
 </html>
