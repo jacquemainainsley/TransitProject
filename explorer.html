@@ -173,14 +173,29 @@ data:allPlotData,
 backgroundColor:"rgba(150,150,150,.3)",
 pointRadius:4
 },
-
+          
 {
 label:"Selected Planet",
 data:[],
-backgroundColor:"orange",
-pointRadius:8
-},
+pointRadius:8,
 
+backgroundColor:function(context){
+
+let p=
+context.dataset.data[context.dataIndex];
+
+if(!p || !p.gas) return "orange";
+
+if(p.gas==="H2O") return "blue";
+if(p.gas==="CO2") return "red";
+if(p.gas==="CH4") return "green";
+if(p.gas==="O2") return "purple";
+
+return "orange";
+
+}
+},
+          
 {
 label:"y=x",
 type:"line",
