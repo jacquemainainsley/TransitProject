@@ -3,10 +3,12 @@
 <head>
 <title>Exoplanet Photon Explorer</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
 let data = [];
-let chart = null;
 
+// Load CSV
 fetch('photoncountdata.csv')
 .then(response => response.text())
 .then(text => {
@@ -18,10 +20,10 @@ rows.forEach(row => {
 let [planet, gas, m1, m2] = row.split(',');
 
 data.push({
-planet: planet.trim(),
-gas: gas.trim(),
-m1: parseFloat(m1),
-m2: parseFloat(m2)
+planet,
+gas,
+m1,
+m2
 });
 
 });
@@ -30,159 +32,87 @@ populateDropdown();
 
 });
 
-
 function populateDropdown(){
 
 let planets =
-[...new Set(data.map(d=>d.planet))];
+[...new Set(data.map(d => d.planet))];
 
 let dropdown =
 document.getElementById("planet");
 
 planets.forEach(p=>{
-let option=document.createElement("option");
-option.value=p;
-option.text=p;
+
+let option =
+document.createElement("option");
+
+option.value = p;
+option.text = p;
+
 dropdown.add(option);
+
 });
+
+// show first planet automatically
+dropdown.selectedIndex=0;
+updateResults();
 
 dropdown.addEventListener(
 "change",
 updateResults
 );
 
-dropdown.selectedIndex=0;
-
-updateResults();
-
 }
-
 
 
 function updateResults(){
 
-let selected=
+let selected =
 document.getElementById("planet").value;
 
-let filtered=
+let filtered =
 data.filter(
 d=>d.planet===selected
 );
 
-
-// update table
-
-let html=
+let html =
 "<table border='1'><tr><th>Gas</th><th>Method 1</th><th>Method 2</th></tr>";
 
 filtered.forEach(d=>{
+
 html +=
 `<tr>
 <td>${d.gas}</td>
 <td>${d.m1}</td>
 <td>${d.m2}</td>
 </tr>`;
+
 });
 
-html+="</table>";
+html += "</table>";
 
 document.getElementById("results").innerHTML=html;
 
-
-// redraw plot
-drawChart(selected);
-
-}
-
-
-
-function drawChart(selectedPlanet){
-
-if(chart){
-chart.destroy();
-}
-
-let backgroundPoints=
-data.map(d=>({
-x:d.m1,
-y:d.m2
-}));
-
-let selectedPoints=
-data
-.filter(d=>d.planet===selectedPlanet)
-.map(d=>({
-x:d.m1,
-y:d.m2
-}));
-
-let minVal=Math.min(
-...data.map(d=>Math.min(d.m1,d.m2))
-);
-
-let maxVal=Math.max(
-...data.map(d=>Math.max(d.m1,d.m2))
-);
-
-chart = new Chart(
-document.getElementById("comparisonChart"),
-{
-type:"scatter",
-
-data:{
-datasets:[
-
-{
-label:"All Planets",
-data:backgroundPoints,
-backgroundColor:"rgba(150,150,150,.3)",
-pointRadius:4
-},
-
-{
-label:selectedPlanet,
-data:selectedPoints,
-backgroundColor:"orange",
-pointRadius:8
-},
-
-{
-label:"y=x",
-type:"line",
-data:[
-{x:minVal,y:minVal},
-{x:maxVal,y:maxVal}
-],
-borderColor:"black",
-pointRadius:0
-}
-
-]
-},
-
-options:{
-scales:{
-x:{
-type:"logarithmic",
-title:{
-display:true,
-text:"Method 1"
-}
-},
-y:{
-type:"logarithmic",
-title:{
-display:true,
-text:"Method 2"
-}
-}
-}
-}
-
-});
-
 }
 </script>
+
+</head>
+
+<body>
+
+<h1>Exoplanet Photon Explorer</h1>
+
+<label for="planet">
+Choose a planet:
+</label>
+
+<select id="planet"></select>
+
+<h2>Results</h2>
+
+<div id="results"></div>
+
+<h2>Method Comparison (coming soon!)</h2>
+<canvas id="comparisonChart"></canvas>
 
 </body>
 </html>
