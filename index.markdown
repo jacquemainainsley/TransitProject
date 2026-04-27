@@ -1,3 +1,8 @@
+---
+layout: home
+title: "My Home Page"
+---
+
 Welcome to my Project Site!
 
 I found photon counts for the biosignature gases of transiting exoplanets.
