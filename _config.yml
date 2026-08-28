@@ -18,8 +18,12 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title-bold: "Ainsley Jacquemain Transit Project Website"
-title-normal: "Exoplanet Biosignatures with the Transit Method"
+# title-bold: "Ainsley Jacquemain Transit Project Website"
+# title-normal: "Exoplanet Biosignatures with the Transit Method"
+title: "Exploring Exoplanet Biosignatures"
+landing-title: "Exploring Exoplanet Biosignatures"
+show_tile: false
+
 email: "jacquemain.ainsley@gmail.com"
 description: >- # this means to ignore newlines until "baseurl:"
   "Exploring exoplanet biosignatures with transit data."
@@ -44,6 +48,28 @@ phone: "(614) 292-1773"
 # Homepage tiles
 tiles-source: pages
 tiles-count: 2
+
+---
+
+This project investigates photon counts across four potential biosignature gas ranges for a selection of transiting exoplanets.
+
+Using two independent methods, you can explore the photon counts for individual planets or compare the results between methods.
+
+[Explore Photon Counts]({{ '/explorer.html' | relative_url }})
+
+[Compare the Methods]({{ '/comparison.html' | relative_url }})
+
+
+
+
+
+
+
+
+
+
+
+
   
 # For architect:
 # remote_theme: pages-themes/architect@v0.2.0
