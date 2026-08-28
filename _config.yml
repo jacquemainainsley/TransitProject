@@ -29,6 +29,7 @@ url: "https://jacquemainainsley.github.io" # the base hostname & protocol for yo
 remote_theme: "andrewbanchich/forty-jekyll-theme"
 plugins:
   - jekyll-feed
+  - jekyll-remote-theme
   
 # For architect:
 # remote_theme: pages-themes/architect@v0.2.0
