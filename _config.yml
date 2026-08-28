@@ -18,11 +18,13 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: "Ainsley Jacquemain Transit Project Website"
+title-bold: "Ainsley Jacquemain Transit Project Website"
+title-normal: "Exoplanet Biosignatures with the Transit Method"
 email: "jacquemain.ainsley@gmail.com"
 description: >- # this means to ignore newlines until "baseurl:"
-  "Explore Exoplanet Biosignatures with Transit Data!"
+  "Exploring exoplanet biosignatures with transit data."
 baseurl: "/TransitProject" # the subpath of your site, e.g. /blog
+author: "Ainsley Jacquemain"
 url: "https://jacquemainainsley.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Build settings
@@ -30,6 +32,18 @@ remote_theme: "andrewbanchich/forty-jekyll-theme"
 plugins:
   - jekyll-feed
   - jekyll-remote-theme
+  
+# Contact settings
+street_address: "McPherson Laboratory, 140 W 18th Ave"
+city: "Columbus"
+state: "OH"
+zip_code: "43210"
+country: "United States of America"
+phone: "(614) 292-1773"
+
+# Homepage tiles
+tiles-source: pages
+tiles-count: 2
   
 # For architect:
 # remote_theme: pages-themes/architect@v0.2.0
